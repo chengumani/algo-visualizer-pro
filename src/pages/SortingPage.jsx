@@ -259,7 +259,7 @@ const SortingPage = () => {
         <div className="space-y-4">
           <div className="glass-panel p-4 border border-white/5">
             <p className="text-sm text-slate-300 mb-3 min-h-[24px]">{explanation}</p>
-            <div className="relative h-64 md:h-72 flex items-end justify-center bg-white/5 rounded-xl p-3 overflow-hidden">
+            <div className="relative h-64 md:h-72 flex items-end justify-center bg-white/5 rounded-xl p-3 pb-8 overflow-hidden">
               <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
               <div className="flex items-end gap-[2px] w-full h-full">
                 {array.map((value, idx) => (
