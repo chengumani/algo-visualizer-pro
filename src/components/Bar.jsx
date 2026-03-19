@@ -18,7 +18,10 @@ const Bar = ({ value, width, state = 'default', showValue }) => {
         style={{ height: `${value}%` }}
       />
       {showValue && (
-        <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[11px] font-semibold text-white drop-shadow" style={{textShadow:'0 1px 2px rgba(0,0,0,0.6)'}}>
+        <span
+          className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[11px] font-semibold text-white drop-shadow"
+          style={{ textShadow: '0 1px 2px rgba(0,0,0,0.65)' }}
+        >
           {value}
         </span>
       )}
