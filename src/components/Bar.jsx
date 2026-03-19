@@ -14,15 +14,14 @@ const Bar = ({ value, width, state = 'default', showValue }) => {
       style={{ minWidth: `${width}%` }}
     >
       <div
-        className={`${barClass} rounded-sm transition-[height] duration-200 ease-out w-full h-full`}
+        className={`${barClass} rounded-sm transition-[height] duration-200 ease-out w-full absolute bottom-0`}
         style={{ height: `${value}%` }}
-      >
-        {showValue && (
-          <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-slate-200 drop-shadow">
-            {value}
-          </span>
-        )}
-      </div>
+      />
+      {showValue && (
+        <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-slate-200 drop-shadow">
+          {value}
+        </span>
+      )}
     </div>
   );
 };
