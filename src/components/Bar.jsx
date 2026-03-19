@@ -10,11 +10,11 @@ const Bar = ({ value, width, state = 'default', showValue }) => {
   const barClass = colorClass[state] ?? colorClass.default;
   return (
     <div
-      className={`relative flex-1 ${state === 'swap' ? 'bar-swap' : ''}`}
+      className={`relative flex-1 h-full ${state === 'swap' ? 'bar-swap' : ''}`}
       style={{ minWidth: `${width}%` }}
     >
       <div
-        className={`${barClass} rounded-sm transition-[height] duration-200 ease-out w-full`}
+        className={`${barClass} rounded-sm transition-[height] duration-200 ease-out w-full h-full`}
         style={{ height: `${value}%` }}
       >
         {showValue && (
