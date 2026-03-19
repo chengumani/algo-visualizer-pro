@@ -24,6 +24,7 @@ export const bfs = (rows, cols, walls, start, end) => {
       if (visited.has(nKey) || walls.has(nKey)) continue;
       visited.add(nKey);
       prev.set(nKey, nodeKey);
+      steps.push({ type: 'frontier', node: neighbor, message: `Queued (${neighbor.row}, ${neighbor.col})` });
       queue.push(neighbor);
     }
   }

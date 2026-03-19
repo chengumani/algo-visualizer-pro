@@ -33,6 +33,7 @@ export const astar = (rows, cols, walls, start, end) => {
         gScore.set(nKey, tentativeG);
         const f = tentativeG + heuristic(neighbor, end);
         fScore.set(nKey, f);
+        steps.push({ type: 'frontier', node: neighbor, message: `Frontier (${neighbor.row}, ${neighbor.col}) f=${f.toFixed(1)}` });
         open.set(nKey, f);
       }
     }

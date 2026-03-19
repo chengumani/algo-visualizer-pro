@@ -6,6 +6,7 @@ import { mergeSort } from '../algorithms/sorting/mergeSort';
 import { quickSort } from '../algorithms/sorting/quickSort';
 import { generateRandomArray } from '../utils/arrays';
 import { sleep } from '../utils/delay';
+import Bar from '../components/Bar';
 
 const algorithmMap = {
   merge: { label: 'Merge Sort', fn: mergeSort },
@@ -25,6 +26,8 @@ const SortingPage = () => {
   const [activeIndices, setActiveIndices] = useState([]);
   const [swapIndices, setSwapIndices] = useState([]);
   const [sortedIndices, setSortedIndices] = useState(new Set());
+  const [pivotIndex, setPivotIndex] = useState(null);
+  const [showValues, setShowValues] = useState(true);
   const stepsRef = useRef([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -37,6 +40,7 @@ const SortingPage = () => {
     setActiveIndices([]);
     setSwapIndices([]);
     setSortedIndices(new Set());
+    setPivotIndex(null);
     setCurrentStep(0);
     playRef.current = false;
     setIsPlaying(false);
@@ -58,11 +62,12 @@ const SortingPage = () => {
     buildSteps(newArr, algorithm);
   }, [size, algorithm]);
 
-  const getBarColor = (index) => {
-    if (sortedIndices.has(index)) return 'bg-aurora';
-    if (swapIndices.includes(index)) return 'bg-ember';
-    if (activeIndices.includes(index)) return 'bg-amber';
-    return 'bg-white/30';
+  const getBarState = (index) => {
+    if (sortedIndices.has(index)) return 'sorted';
+    if (pivotIndex === index) return 'pivot';
+    if (swapIndices.includes(index)) return 'swap';
+    if (activeIndices.includes(index)) return 'compare';
+    return 'default';
   };
 
   const applyStep = (step) => {
@@ -70,9 +75,11 @@ const SortingPage = () => {
     setExplanation(message);
     setActiveIndices([]);
     setSwapIndices([]);
+    setPivotIndex(null);
 
     if (type === 'compare' || type === 'pivot') {
       setActiveIndices(indices);
+      if (type === 'pivot') setPivotIndex(indices[0]);
     }
     if (type === 'swap') {
       setSwapIndices(indices);
@@ -234,6 +241,19 @@ const SortingPage = () => {
           <button className="btn-ghost w-full" onClick={handleGenerate} disabled={isPlaying}>
             New random array
           </button>
+
+          <div className="flex items-center justify-between">
+            <p className="control-label">Show values</p>
+            <label className="inline-flex items-center gap-2 text-sm text-slate-200">
+              <input
+                type="checkbox"
+                checked={showValues}
+                onChange={(e) => setShowValues(e.target.checked)}
+                className="accent-sky-500"
+              />
+              <span className="text-xs text-slate-300">auto-hides when size &gt; 50</span>
+            </label>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -243,11 +263,12 @@ const SortingPage = () => {
               <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
               <div className="flex items-end gap-[2px] w-full h-full">
                 {array.map((value, idx) => (
-                  <div
+                  <Bar
                     key={idx}
-                    className={`${getBarColor(idx)} rounded-sm transition-all duration-150 ease-out flex-1`}
-                    style={{ height: `${value}%`, minWidth: `${barWidth}%` }}
-                    title={`Index ${idx}: ${value}`}
+                    value={value}
+                    width={barWidth}
+                    state={getBarState(idx)}
+                    showValue={showValues && size <= 50}
                   />
                 ))}
               </div>

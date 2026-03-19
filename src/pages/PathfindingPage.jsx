@@ -5,6 +5,7 @@ import { dfs } from '../algorithms/pathfinding/dfs';
 import { dijkstra } from '../algorithms/pathfinding/dijkstra';
 import { keyOf } from '../algorithms/pathfinding/common';
 import { sleep } from '../utils/delay';
+import Grid from '../components/Grid';
 
 const algorithms = {
   astar: { label: 'A* (fast & optimal)', fn: astar },
@@ -19,6 +20,7 @@ const cols = 32;
 const PathfindingPage = () => {
   const [walls, setWalls] = useState(new Set());
   const [visited, setVisited] = useState(new Set());
+  const [frontier, setFrontier] = useState(new Set());
   const [path, setPath] = useState(new Set());
   const [start, setStart] = useState({ row: 8, col: 6 });
   const [end, setEnd] = useState({ row: 10, col: 24 });
@@ -37,6 +39,7 @@ const PathfindingPage = () => {
 
   const resetTraversal = () => {
     setVisited(new Set());
+    setFrontier(new Set());
     setPath(new Set());
     stepsRef.current = [];
     setCurrentStep(0);
@@ -63,6 +66,10 @@ const PathfindingPage = () => {
     const key = keyOf(node);
     if (type === 'visit') {
       setVisited((prev) => new Set(prev).add(key));
+      setExplanation(message);
+    }
+    if (type === 'frontier') {
+      setFrontier((prev) => new Set(prev).add(key));
       setExplanation(message);
     }
     if (type === 'path') {
@@ -92,7 +99,8 @@ const PathfindingPage = () => {
       }
       applyStep(stepsRef.current[i]);
       setCurrentStep(i + 1);
-      await sleep(delay);
+      const stepDelay = stepsRef.current[i].type === 'path' ? 28 : delay;
+      await sleep(stepDelay);
     }
     setIsPlaying(false);
     playRef.current = false;
@@ -100,6 +108,7 @@ const PathfindingPage = () => {
 
   const handlePlay = () => {
     setVisited(new Set());
+    setFrontier(new Set());
     setPath(new Set());
     stepsRef.current = [];
     runAlgorithm(0);
@@ -123,16 +132,6 @@ const PathfindingPage = () => {
     if (currentStep >= stepsRef.current.length) return;
     applyStep(stepsRef.current[currentStep]);
     setCurrentStep((prev) => prev + 1);
-  };
-
-  const cellStyle = (row, col) => {
-    const key = keyOf({ row, col });
-    if (key === keyOf(start)) return 'bg-neon text-ink font-bold';
-    if (key === keyOf(end)) return 'bg-ember text-white font-bold';
-    if (path.has(key)) return 'bg-aurora/70';
-    if (visited.has(key)) return 'bg-white/15';
-    if (walls.has(key)) return 'bg-slate-900';
-    return 'bg-white/5 hover:bg-white/10';
   };
 
   const handleCellDown = (row, col) => {
@@ -247,24 +246,20 @@ const PathfindingPage = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="glass-panel p-4 border border-white/5">
-            <p className="text-sm text-slate-300 mb-3 min-h-[24px]">{explanation}</p>
-            <div
-              className="grid gap-[2px] bg-white/5 rounded-xl p-3 overflow-hidden"
-              style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-            >
-              {Array.from({ length: rows }).map((_, r) =>
-                Array.from({ length: cols }).map((__, c) => (
-                  <div
-                    key={`${r}-${c}`}
-                    onMouseDown={() => handleCellDown(r, c)}
-                    onMouseEnter={() => handleCellEnter(r, c)}
-                    className={`aspect-square rounded-sm border border-white/5 transition-colors ${cellStyle(r, c)}`}
-                  />
-                )),
-              )}
-            </div>
-          </div>
+          <p className="text-sm text-slate-300 mb-1 min-h-[24px]">{explanation}</p>
+          <Grid
+            rows={rows}
+            cols={cols}
+            startKey={keyOf(start)}
+            endKey={keyOf(end)}
+            path={path}
+            visited={visited}
+            frontier={frontier}
+            walls={walls}
+            onCellDown={handleCellDown}
+            onCellEnter={handleCellEnter}
+            onMouseUp={handleMouseUp}
+          />
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span>
               Step {currentStep} / {stepsRef.current.length}

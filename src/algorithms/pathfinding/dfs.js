@@ -26,6 +26,7 @@ export const dfs = (rows, cols, walls, start, end) => {
       const nKey = keyOf(neighbor);
       if (visited.has(nKey)) continue;
       prev.set(nKey, nodeKey);
+      steps.push({ type: 'frontier', node: neighbor, message: `Pushed (${neighbor.row}, ${neighbor.col})` });
       stack.push(neighbor);
     }
   }

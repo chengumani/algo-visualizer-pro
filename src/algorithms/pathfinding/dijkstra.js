@@ -30,6 +30,7 @@ export const dijkstra = (rows, cols, walls, start, end) => {
       if (newDist < (dist.get(nKey) ?? Infinity)) {
         dist.set(nKey, newDist);
         prev.set(nKey, current.key);
+        steps.push({ type: 'frontier', node: neighbor, message: `Relaxed (${neighbor.row}, ${neighbor.col}) to ${newDist}` });
         queue.push({ key: nKey, node: neighbor, distance: newDist });
       }
     }

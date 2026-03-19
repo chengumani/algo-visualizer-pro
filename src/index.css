@@ -9,7 +9,7 @@
 }
 
 body {
-  @apply bg-ink text-slate-100 font-body min-h-screen;
+  @apply bg-[#0f172a] text-slate-100 font-body min-h-screen;
   background: radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.18), transparent 35%),
     radial-gradient(circle at 85% 10%, rgba(244, 63, 94, 0.14), transparent 32%),
     radial-gradient(circle at 70% 70%, rgba(34, 197, 94, 0.12), transparent 30%),
@@ -28,7 +28,7 @@ a {
   width: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #22d3ee, #3b82f6);
+  background: linear-gradient(180deg, #22d3ee, #7c3aed);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-track {
@@ -37,7 +37,7 @@ a {
 
 /* Utility classes used in components */
 .glass-panel {
-  @apply bg-slate-800/70 backdrop-blur-xl border border-white/5 rounded-2xl shadow-glass;
+  @apply bg-[#1e293b]/80 backdrop-blur-xl border border-white/5 rounded-2xl shadow-glass transition-all duration-300 ease-out;
 }
 
 .section-title {
@@ -53,7 +53,7 @@ a {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-neon to-sky-500 text-ink font-semibold shadow-lg hover:-translate-y-0.5 transition-all ease-out disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 text-ink font-semibold shadow-lg hover:-translate-y-0.5 hover:shadow-xl transition-all ease-out disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .btn-ghost {
@@ -62,4 +62,26 @@ a {
 
 .control-label {
   @apply text-xs uppercase tracking-[0.14em] text-slate-300 font-semibold;
+}
+
+/* Sorting bar animations */
+.bar-swap {
+  animation: barBounce 220ms ease-out;
+}
+
+@keyframes barBounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px) scale(1.02); }
+  100% { transform: translateY(0); }
+}
+
+/* Path glow animation */
+.path-glow {
+  animation: pathPulse 420ms ease-in-out infinite alternate;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.55);
+}
+
+@keyframes pathPulse {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(1.1); opacity: 1; }
 }
