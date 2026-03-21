@@ -14,6 +14,12 @@ const algorithms = {
   dfs: { label: 'Depth-First Search', fn: dfs },
 };
 
+const scenarios = {
+  empty: { label: 'Open grid (no walls)', density: 0 },
+  sparse: { label: 'Random obstacles (light)', density: 0.12 },
+  maze: { label: 'Simple corridor maze', density: 'maze' },
+};
+
 const rows = 18;
 const cols = 32;
 
@@ -26,6 +32,7 @@ const PathfindingPage = () => {
   const [end, setEnd] = useState({ row: 10, col: 24 });
   const [algorithm, setAlgorithm] = useState('astar');
   const [mode, setMode] = useState('wall');
+  const [scenario, setScenario] = useState('empty');
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [drawMode, setDrawMode] = useState('add');
   const [speed, setSpeed] = useState(55);
@@ -78,6 +85,32 @@ const PathfindingPage = () => {
     }
   };
 
+  const generateScenarioWalls = (type) => {
+    if (type === 'empty') return new Set();
+    if (type === 'maze') {
+      const next = new Set();
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (r % 2 === 0 && c % 4 === 0) next.add(keyOf({ row: r, col: c }));
+          if (c === Math.floor(cols / 2) && r % 3 === 1) next.add(keyOf({ row: r, col: c }));
+        }
+      }
+      return next;
+    }
+    // sparse random
+    const density = scenarios[type]?.density ?? 0.1;
+    const next = new Set();
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const key = keyOf({ row: r, col: c });
+        if (Math.random() < density && key !== keyOf(start) && key !== keyOf(end)) {
+          next.add(key);
+        }
+      }
+    }
+    return next;
+  };
+
   const runAlgorithm = async (startIndex = 0) => {
     if (keyOf(start) === keyOf(end)) {
       setExplanation('Choose different start and end nodes.');
@@ -112,6 +145,14 @@ const PathfindingPage = () => {
     setPath(new Set());
     stepsRef.current = [];
     runAlgorithm(0);
+  };
+
+  const handleScenario = (value) => {
+    setScenario(value);
+    const nextWalls = generateScenarioWalls(value);
+    setWalls(nextWalls);
+    resetTraversal();
+    setExplanation(`Loaded scenario: ${scenarios[value].label}`);
   };
 
   const handlePause = () => {
@@ -201,6 +242,22 @@ const PathfindingPage = () => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="space-y-2">
+            <p className="control-label">Scenario</p>
+            <select
+              value={scenario}
+              onChange={(e) => handleScenario(e.target.value)}
+              className="w-full bg-slate-900/60 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-neon/70"
+            >
+              {Object.entries(scenarios).map(([id, meta]) => (
+                <option key={id} value={id}>
+                  {meta.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-300">Pick a preset layout to avoid hand-drawing walls.</p>
           </div>
 
           <div className="space-y-2">
