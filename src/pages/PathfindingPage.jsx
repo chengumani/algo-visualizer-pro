@@ -6,6 +6,7 @@ import { dijkstra } from '../algorithms/pathfinding/dijkstra';
 import { keyOf } from '../algorithms/pathfinding/common';
 import { sleep } from '../utils/delay';
 import Grid from '../components/Grid';
+import PathTimeline from '../components/PathTimeline';
 
 const algorithms = {
   astar: { label: 'A* (fast & optimal)', fn: astar },
@@ -28,6 +29,8 @@ const PathfindingPage = () => {
   const [visited, setVisited] = useState(new Set());
   const [frontier, setFrontier] = useState(new Set());
   const [path, setPath] = useState(new Set());
+  const visitedOrderRef = useRef([]);
+  const [visitedOrder, setVisitedOrder] = useState([]);
   const [start, setStart] = useState({ row: 8, col: 6 });
   const [end, setEnd] = useState({ row: 10, col: 24 });
   const [algorithm, setAlgorithm] = useState('astar');
@@ -48,6 +51,8 @@ const PathfindingPage = () => {
     setVisited(new Set());
     setFrontier(new Set());
     setPath(new Set());
+    visitedOrderRef.current = [];
+    setVisitedOrder([]);
     stepsRef.current = [];
     setCurrentStep(0);
     setExplanation('Grid cleared. Draw and run again.');
@@ -73,6 +78,8 @@ const PathfindingPage = () => {
     const key = keyOf(node);
     if (type === 'visit') {
       setVisited((prev) => new Set(prev).add(key));
+      visitedOrderRef.current = [...visitedOrderRef.current, key];
+      setVisitedOrder(visitedOrderRef.current);
       setExplanation(message);
     }
     if (type === 'frontier') {
@@ -316,6 +323,12 @@ const PathfindingPage = () => {
             onCellDown={handleCellDown}
             onCellEnter={handleCellEnter}
             onMouseUp={handleMouseUp}
+          />
+          <PathTimeline
+            visitedOrder={visitedOrder}
+            pathSet={path}
+            startKey={keyOf(start)}
+            endKey={keyOf(end)}
           />
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span>
